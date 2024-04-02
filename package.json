@@ -1,0 +1,18 @@
+{
+  "name": "server_socket_docs_clone",
+  "version": "1.0.0",
+  "description": "server for managing sockets",
+  "main": "index.js",
+  "scripts": {
+    "start" : "nodemon index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "chandra",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "node-fetch": "^3.3.2",
+    "socket.io": "^4.7.5"
+  }
+}
