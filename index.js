@@ -3,6 +3,7 @@ require('dotenv').config()
 const http = require("http");
 const { Server } = require("socket.io");
 const cors = require("cors");
+const axios = require('axios')
 
 const httpServer = http.createServer();
   
@@ -15,23 +16,71 @@ const io = new Server(httpServer, {
   },
 });
 
+const findDocument = async (id)=>{
+  if(id == null) return 
+  try {
+    let res = await fetch('http://localhost:8000/api/roomdetails',{
+      method:'POST',
+      headers:{
+        'Access-Control-Allow-Origin': '*',
+        Accept:"application/json",
+        "Content-Type":"application/json"
+      },
+      credentials:'include',
+      body:JSON.stringify({
+        roomName : id
+      })
+    })
+    let data = await res.json();
+    // console.log('data',data);
+    if(res.status === 200)
+    return data.document
+  return {}
+    
+  } catch (error) {
+    console.log("error", error);
+  }
+}
+
+const updateDocument = async (id, content)=>{
+  console.log(content);
+  if(id == null) return 
+  try {
+    let res = await fetch('http://localhost:8000/api/savedocument',{
+      method:'POST',
+      headers:{
+        'Access-Control-Allow-Origin': '*',
+        Accept:"application/json",
+        "Content-Type":"application/json"
+      },
+      credentials:'include',
+      body:JSON.stringify({
+        roomName : id,content
+      })
+    })
+    if(res.status === 200)
+      console.log('saved');
+    
+  } catch (error) {
+    console.log("error", error);
+  }
+}
+
 io.on("connection",async  (socket) => {
     console.log("A user connected:", socket.id);
-    // await socket.on('joinRoom', async (roomName,email) => {
-    //   if(!email) return ;
-    //   socket.email=email;
-    //   socket.roomName=roomName
-    //   await socket.join(roomName);
-    //   console.log('room and email',roomName,email);
-    // });
   
-    socket.on('get_document',(id)=>{
-      const data = ""
+    socket.on('get_document',async (id)=>{
+      const document = await findDocument(id)
+      if(document == undefined) return 
+      // console.log('document', document);
       socket.join(id)
-      socket.emit("load_document", data)
+      socket.emit("load_document", document.content)
       socket.on("send-changes", async (delta) => {
-        // console.log(delta);
         socket.broadcast.to(id).emit('recieved_changes', delta)
+      });
+      socket.on("save_document", async (data) => {
+        console.log('data',data);
+        await updateDocument(id, data)
       });
     })
 
