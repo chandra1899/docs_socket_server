@@ -72,9 +72,10 @@ io.on("connection",async  (socket) => {
     socket.on('get_document',async (id)=>{
       const document = await findDocument(id)
       if(document == undefined) return 
-      // console.log('document', document);
       socket.join(id)
-      socket.emit("load_document", document.content)
+      let d = document.content
+      console.log('document from get_document', d);
+      socket.emit("load_document", d)
       socket.on("send-changes", async (delta) => {
         socket.broadcast.to(id).emit('recieved_changes', delta)
       });
