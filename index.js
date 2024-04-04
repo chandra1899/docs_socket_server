@@ -74,56 +74,16 @@ io.on("connection",async  (socket) => {
       if(document == undefined) return 
       socket.join(id)
       let d = document.content
-      console.log('document from get_document', d);
+      // console.log('document from get_document', d);
       socket.emit("load_document", d)
       socket.on("send-changes", async (delta) => {
         socket.broadcast.to(id).emit('recieved_changes', delta)
       });
       socket.on("save_document", async (data) => {
-        console.log('data',data);
+        // console.log('data',data);
         await updateDocument(id, data)
       });
     })
-
-  await socket.on("change", async (roomId, data) => {
-      console.log("change", data);
-
-      await io.to(roomId).emit("changed",data);
-  });
-
-  await socket.on("receive_draw_req", async (email,roomName) => {
-    console.log("receive_draw_req");
-      await io.to(roomName).emit("receive_draw_req",email);    
-  });
-
-  await socket.on("game_over", async (roomName,email) => {
-    console.log("game_over");
-      await io.to(roomName).emit("game_over",email);  
-  });
-
-  await socket.on("draw_accepted", async (email,roomName) => {
-    console.log("draw_accepted");
-      await io.to(roomName).emit("draw_accepted",email);    
-  });
-
-//   socket.on('disconnect', async function () {
-//     let res=await fetch(`https://chessmastershub.vercel.app/api/setdisconnected`,{
-//       method:'POST',
-//       headers:{
-//         'Access-Control-Allow-Origin': '*',
-//         Accept:"application/json",
-//         "Content-Type":"application/json"
-//       },
-//       credentials:'include',
-//       body:JSON.stringify({
-//         email:socket.email,
-//         roomName:socket.roomName
-//       })
-//     })
-//     if(res.status===200){
-//       console.log(`${socket.email} is disconnected from ${socket.roomName}`);
-//     }
-//   });
 });
 
 httpServer.listen(3001, () => {
