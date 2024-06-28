@@ -1,5 +1,4 @@
 require('dotenv').config()
-// const fetch = require("node-fetch");
 const http = require("http");
 const { Server } = require("socket.io");
 const cors = require("cors");
@@ -17,14 +16,10 @@ const io = new Server(httpServer, {
 });
 
 io.on("connection",async  (socket) => {
-    console.log("A user connected:", socket.id);
-  
     socket.on('establish-conection',async (id)=>{
-      console.log('establish-conection', id);
       socket.join(id)
       socket.emit("connection-established",{})
       socket.on("send-changes", async (delta) => {
-        console.log('changes sent', delta);
         socket.broadcast.to(id).emit('receive-changes', delta)
       });
     })
