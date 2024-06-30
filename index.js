@@ -8,7 +8,8 @@ const httpServer = http.createServer();
   
 const io = new Server(httpServer, {
   cors: {
-    origin: ["http://localhost:8000", "https://admin.socket.io", "https://personal-document.vercel.app/","https://personal-docs-142jxchn3-chandra1899s-projects.vercel.app/","https://hoppscotch.io/"], // Replace with your frontend URL
+    // origin: ["http://localhost:8000", "https://admin.socket.io", "https://personal-document.vercel.app/","https://personal-docs-142jxchn3-chandra1899s-projects.vercel.app/","https://hoppscotch.io/"], // Replace with your frontend URL
+    origin: "*",
     methods: ["GET", "POST"],
     allowedHeaders: ["my-custom-header"],
     credentials: true,
@@ -31,6 +32,6 @@ io.on("connection",async  (socket) => {
     })
 });
 
-httpServer.listen(3001, () => {
-  console.log(`Socket.io server is running on port ${3001}`);
+httpServer.listen(process.env.PORT || 3001, () => {
+  console.log(`Socket.io server is running on port ${process.env.PORT || 3001}`);
 });
