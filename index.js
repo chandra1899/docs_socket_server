@@ -16,13 +16,16 @@ const io = new Server(httpServer, {
 });
 
 io.on("connection",async  (socket) => {
-    socket.on('establish-conection',async (id)=>{
+  console.log('user connected', socket);
+  socket.on('establish-conection',async (id)=>{
+      console.log('connection established in room', id);
       socket.join(id)
       socket.emit("connection-established",{})
       socket.on("send-changes", async (delta) => {
         socket.broadcast.to(id).emit('receive-changes', delta)
       });
       socket.on('disconnect', () => {
+        console.log('user leaft the room', id, 'with socket', socket);
         socket.leave(id)
       })
     })
