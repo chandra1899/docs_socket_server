@@ -8,7 +8,7 @@ const httpServer = http.createServer();
   
 const io = new Server(httpServer, {
   cors: {
-    origin: ["http://localhost:8000", "https://admin.socket.io"], // Replace with your frontend URL
+    origin: ["http://localhost:8000", "https://admin.socket.io", "https://personal-document.vercel.app/"], // Replace with your frontend URL
     methods: ["GET", "POST"],
     allowedHeaders: ["my-custom-header"],
     credentials: true,
@@ -22,9 +22,12 @@ io.on("connection",async  (socket) => {
       socket.on("send-changes", async (delta) => {
         socket.broadcast.to(id).emit('receive-changes', delta)
       });
+      socket.on('disconnect', () => {
+        socket.leave(id)
+      })
     })
 });
 
-httpServer.listen(3001, () => {
-  console.log(`Socket.io server is running on port ${3001}`);
+httpServer.listen(process.env.PORT || 3001, () => {
+  console.log(`Socket.io server is running on port ${process.env.PORT || 3001}`);
 });
